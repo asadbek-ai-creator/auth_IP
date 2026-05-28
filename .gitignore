@@ -3,9 +3,14 @@ __pycache__/
 *.pyo
 
 users_db.json
+users.db
+*.sqlite
+*.sqlite3
+instance/
 
 .venv/
 venv/
 .idea/
 .vscode/
+.claude/
 .DS_Store

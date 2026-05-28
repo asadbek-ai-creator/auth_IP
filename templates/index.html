@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptographic Authentication — Educational Demo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <h1>Cryptographic Authentication</h1>
+            <p class="tagline">Salted SHA-256 hashing, visualized step-by-step.</p>
+        </div>
+    </header>
+
+    <main class="layout">
+        <!-- LEFT: forms -->
+        <section class="panel panel-forms">
+            <h2 class="panel-title">User Action</h2>
+
+            {% if status %}
+            <div class="banner {{ 'banner-ok' if status.success else 'banner-err' }}">
+                {{ status.message }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('register') }}" class="auth-form" autocomplete="off">
+                <h3>Register</h3>
+                <label>
+                    <span>Username</span>
+                    <input type="text" name="username" required value="{{ username or '' }}" />
+                </label>
+                <label>
+                    <span>Password</span>
+                    <input type="password" name="password" required />
+                </label>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+            </form>
+
+            <form method="POST" action="{{ url_for('login') }}" class="auth-form" autocomplete="off">
+                <h3>Login</h3>
+                <label>
+                    <span>Username</span>
+                    <input type="text" name="username" required />
+                </label>
+                <label>
+                    <span>Password</span>
+                    <input type="password" name="password" required />
+                </label>
+                <button type="submit" class="btn btn-secondary">Sign In</button>
+            </form>
+
+            <p class="hint">→ Watch the right panel to see what happens under the hood.</p>
+        </section>
+
+        <!-- RIGHT: educational monitor -->
+        <section class="panel panel-monitor">
+            <div class="monitor-header">
+                <h2 class="panel-title light">Live Hash Monitor</h2>
+                {% if trace %}
+                <span class="monitor-tag">{{ trace.action }} · {{ trace.timestamp }}</span>
+                {% endif %}
+            </div>
+
+            <div class="console" role="log" aria-live="polite">
+                {% if trace %}
+                    <div class="console-divider">{{ '─' * 78 }}</div>
+                    <div class="console-line tag-HEADER">  [{{ trace.timestamp }}]  {{ trace.action }}</div>
+                    <div class="console-divider">{{ '─' * 78 }}</div>
+                    {% for tag, text in trace.steps %}
+                    <div class="console-line tag-{{ tag }}">[{{ '%-8s' % tag }}] {{ text }}</div>
+                    {% endfor %}
+                {% else %}
+                    <div class="console-divider">{{ '─' * 78 }}</div>
+                    <div class="console-line tag-HEADER">  Awaiting first authentication action...</div>
+                    <div class="console-divider">{{ '─' * 78 }}</div>
+                    <div class="console-line tag-INFO">[INFO    ] Submit the Register or Login form to begin.</div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <span>Educational demo — not for production use. Real systems should use Argon2 or bcrypt.</span>
+    </footer>
+</body>
+</html>
